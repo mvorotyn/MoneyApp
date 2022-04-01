@@ -1,4 +1,4 @@
-import { useStore } from '@/stores/stores'
+import { useStore } from '@/stores/mobxStore'
 import { observer } from 'mobx-react-lite'
 import {
 	UserOutlined,

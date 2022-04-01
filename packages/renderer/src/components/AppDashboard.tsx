@@ -1,4 +1,4 @@
-import { useStore } from '@/stores/stores'
+import { useStore } from '@/stores/mobxStore'
 import { Button, Col, Row, Statistic } from 'antd'
 import { observer } from 'mobx-react-lite'
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'

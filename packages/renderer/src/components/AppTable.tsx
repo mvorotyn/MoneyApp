@@ -3,7 +3,7 @@
 import { Popconfirm, Table } from 'antd'
 // import { toJS } from "mobx";
 import { observer } from 'mobx-react-lite'
-import { useStore } from '@/stores/stores'
+import { useStore } from '@/stores/mobxStore'
 
 let columnsData: { [key: string]: any }[]
 

@@ -1,5 +1,5 @@
 import { apiUserLogin, apiUserRegister } from '@/API/syncApi'
-import { useStore } from '@/stores/stores'
+import { useStore } from '@/stores/mobxStore'
 import {
 	Button,
 	Col,

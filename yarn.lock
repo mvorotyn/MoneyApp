@@ -5231,10 +5231,15 @@ mobx-react-lite@^3.3.0:
   resolved "https://registry.npmjs.org/mobx-react-lite/-/mobx-react-lite-3.3.0.tgz"
   integrity sha512-U/kMSFtV/bNVgY01FuiGWpRkaQVHozBq5CEBZltFvPt4FcV111hEWkgwqVg9GPPZSEuEdV438PEz8mk8mKpYlA==
 
-mobx-state-tree@^5.1.3:
+mobx-state-tree@^5.0.1, mobx-state-tree@^5.1.3:
   version "5.1.3"
   resolved "https://registry.npmjs.org/mobx-state-tree/-/mobx-state-tree-5.1.3.tgz"
   integrity sha512-noS6f0OG1T94Nlgq7Ex9k2JBGkoFclEdNLE5rlfOy5CUTzcHNJ18fu8t2TmGXDNzH/jdwc8xAR/w36A2XAUmwA==
+
+mobx@^6.2.0:
+  version "6.5.0"
+  resolved "https://registry.yarnpkg.com/mobx/-/mobx-6.5.0.tgz#dc2d028b1882737f6e813fc92454381e438b7ad3"
+  integrity sha512-pHZ/cySF00FVENDWIDzJyoObFahK6Eg4d0papqm6d7yMkxWTZ/S/csqJX1A3PsYy4t5k3z2QnlwuCfMW5lSEwA==
 
 mobx@^6.4.2:
   version "6.4.2"
@@ -5255,6 +5260,14 @@ ms@2.1.2, ms@^2.1.1:
   version "2.1.2"
   resolved "https://registry.npmjs.org/ms/-/ms-2.1.2.tgz"
   integrity sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w==
+
+mst-log@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/mst-log/-/mst-log-2.0.0.tgz#1708efdca1a21030a67e46147b1e157b6f65dad1"
+  integrity sha512-VvgTgII9qr27Thzzj1QkA/6l4XG5PRy2VYFCU+byL85S7c9R+na2pj7HAMgX8MZ+v22F0gDU0SYt69bFCuyzWw==
+  dependencies:
+    mobx "^6.2.0"
+    mobx-state-tree "^5.0.1"
 
 mute-stream@0.0.7:
   version "0.0.7"

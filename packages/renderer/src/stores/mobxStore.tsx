@@ -1,79 +1,23 @@
-import shortid from 'shortid'
+import { message } from 'antd/lib/'
+import { toJS, values } from 'mobx'
 import {
-	types,
-	applySnapshot,
-	IMaybe,
+	addMiddleware,
 	IModelType,
 	IOptionalIType,
-	IReferenceType,
 	ISimpleType,
 	IStateTreeNode,
+	types,
 	_NotCustomized,
 } from 'mobx-state-tree'
-import { toJS, values } from 'mobx'
-import { createContext, useContext } from 'react'
-import { message } from 'antd/lib/'
 import { NonEmptyObject } from 'mobx-state-tree/dist/internal'
-import { Store } from '@/samples/electron-store'
-
-import {
-	initialFoodTableData,
-	initialHealthTableData,
-	initialHouseTableData,
-	initialTaxesTableData,
-	initialTransportTableData,
-} from './initialData'
+import { mstLog } from 'mst-log'
+import { createContext, useContext } from 'react'
+import shortid from 'shortid'
+import { proxyStore } from './electronStore'
 // import moment from 'moment'
 
 const today = () =>
 	new Date().toISOString().slice(0, 10).replace('-', '/').replace('-', '/')
-
-const Todo = types
-	.model({
-		name: types.optional(types.string, ''),
-		done: types.optional(types.boolean, false),
-		user: types.maybe(types.reference(types.late(() => User))),
-	})
-	.actions(self => {
-		function setName(newName: string) {
-			self.name = newName
-		}
-		// function setUser(
-		//   user:
-		//     | string
-		//     | ({ id: string; name: string } & NonEmptyObject &
-		//         IStateTreeNode<
-		//           IMaybe<
-		//             IReferenceType<
-		//               IModelType<
-		//                 {
-		//                   id: ISimpleType<string>;
-		//                   name: IOptionalIType<ISimpleType<string>, [undefined]>;
-		//                 },
-		//                 {},
-		//                 _NotCustomized,
-		//                 _NotCustomized
-		//               >
-		//             >
-		//           >
-		//         >)
-		//     | undefined
-		// ) {
-		//   if (user === "") {
-		//     // When selected value is empty, set as undefined
-		//     self.user = undefined;
-		//   } else {
-		//     self.user = user;
-		//   }
-		// }
-		// function toggle() {
-		//   self.done = !self.done;
-		// }
-
-		return {
-			setName, // setUser, toggle
-		}
-	})
 
 const User = types.model({
 	id: types.identifier,
@@ -90,15 +34,13 @@ const TableItem = types.model({
 
 const RootStore = types
 	.model({
-		users: types.map(User),
-		todos: types.map(Todo),
+		// users: types.map(User),
 		collapsed: types.boolean,
 		loading: types.boolean,
 		selectedIndex: types.number,
 		selectedRowKeys: types.array(types.string),
 		tableDataIsLoaded: types.boolean,
 		dataForTransportTable: types.array(TableItem),
-		dataForTables: types.map(types.array(TableItem)),
 		dataForHealthTable: types.array(TableItem),
 		dataForFoodTable: types.array(TableItem),
 		dataForHouseTable: types.array(TableItem),
@@ -115,8 +57,7 @@ const RootStore = types
 		formMoneySpendAmount: types.optional(types.number, 0),
 		formOperationDate: types.optional(types.string, ''),
 		formLogin: types.optional(types.string, ''),
-		formPassword: types.optional(types.string, ''),	
-
+		formPassword: types.optional(types.string, ''),
 	})
 	// .views((self) => ({
 	//   get pendingCount() {
@@ -130,10 +71,6 @@ const RootStore = types
 	//   },
 	// }))
 	.actions(self => {
-		function addTodo(id: string, name: any) {
-			self.todos.set(id, Todo.create({ name }))
-		}
-
 		const handleClick = (event: { key: any }) => {
 			self.isTableVisible = false
 			backupCurrentTableData()
@@ -146,11 +83,9 @@ const RootStore = types
 			changeDataForTable()
 		}
 
-
-		function setApiAccessToken(token: string){
-			self.ApiAccessToken = token;
+		function setApiAccessToken(token: string) {
+			self.ApiAccessToken = token
 		}
-
 
 		function openModal() {
 			self.isModalOpen = true
@@ -159,7 +94,6 @@ const RootStore = types
 		function closeModal() {
 			self.isModalOpen = false
 		}
-
 
 		function openLoginModal() {
 			self.isLoginModalOpen = true
@@ -289,22 +223,22 @@ const RootStore = types
 		}
 
 		function modalFormChangeLogin(login: string) {
-			self.formLogin = login;
+			self.formLogin = login
 		}
 
 		function modalFormChangePassword(password: string) {
-			self.formPassword = password;
+			self.formPassword = password
 		}
 
 		async function electronSaveCurrentTable() {
 			if (self.selectedIndex == 1) {
-				await Store.set('dataForTransportTable', self.curentTableData)
+				await proxyStore.set('dataForTransportTable', self.curentTableData)
 			}
 			if (self.selectedIndex == 2) {
-				await Store.set('dataForHealthTable', self.curentTableData)
+				await proxyStore.set('dataForHealthTable', self.curentTableData)
 			}
 			if (self.selectedIndex == 3) {
-				await Store.set('dataForFoodTable', self.curentTableData)
+				await proxyStore.set('dataForFoodTable', self.curentTableData)
 			}
 		}
 
@@ -349,9 +283,9 @@ const RootStore = types
 			self.formOperationDescription = ''
 		}
 
-		function resetLoginForm(){
-			self.formLogin = '';
-			self.formPassword = '';
+		function resetLoginForm() {
+			self.formLogin = ''
+			self.formPassword = ''
 		}
 		function onRowSelectChange(selectedRowKeys: any) {
 			console.log('selectedRowKeys changed: ', selectedRowKeys)
@@ -421,7 +355,6 @@ const RootStore = types
 		}
 
 		return {
-			addTodo,
 			handleClick,
 			tableVisible,
 			deleteItemFromTable,
@@ -452,52 +385,7 @@ const RootStore = types
 		}
 	})
 
-async function electronLoadTransportTable() {
-	const dataForTransportTable = await Store.get('dataForTransportTable')
-	if (dataForTransportTable?.length > 0) {
-		return dataForTransportTable
-	} else {
-		return [...initialTransportTableData]
-	}
-}
-
-async function electronLoad(key: string) {
-	const initialDataRegistry: { [key: string]: any } = {
-		dataForHealthTable: initialHealthTableData,
-		dataForTransportTable: initialTransportTableData,
-		dataForFoodTable: initialFoodTableData,
-		dataForHouseTable: initialHouseTableData,
-		dataForTaxesTable: initialTaxesTableData,
-	}
-
-	const data = await Store.get(key)
-	if (data && data.length > 0) {
-		return data
-	} else {
-		return [...initialDataRegistry[key]]
-	}
-}
 export const store = RootStore.create({
-	users: {
-		'1': {
-			id: '1',
-			name: 'mweststrate',
-		},
-		'2': {
-			id: '2',
-			name: 'mattiamanzati',
-		},
-		'3': {
-			id: '3',
-			name: 'johndoe',
-		},
-	},
-
-	dataForTables: {
-		'1': [],
-		'2': [],
-		'3': [],
-	},
 	collapsed: false,
 	tableDataIsLoaded: true,
 	loading: false,
@@ -508,12 +396,16 @@ export const store = RootStore.create({
 	isTableVisible: false,
 	formOperationDate: today(),
 	formMoneySpendAmount: 1,
-	dataForTransportTable: await electronLoadTransportTable(),
-	dataForHealthTable: await electronLoad('dataForHealthTable'),
-	dataForFoodTable: await electronLoad('dataForFoodTable'),
-	dataForHouseTable: await electronLoad('dataForHouseTable'),
-	dataForTaxesTable: await electronLoad('dataForTaxesTable'),
+	dataForTransportTable: await proxyStore.loadFromRegistry(
+		'dataForTransportTable'
+	),
+	dataForHealthTable: await proxyStore.loadFromRegistry('dataForHealthTable'),
+	dataForFoodTable: await proxyStore.loadFromRegistry('dataForFoodTable'),
+	dataForHouseTable: await proxyStore.loadFromRegistry('dataForHouseTable'),
+	dataForTaxesTable: await proxyStore.loadFromRegistry('dataForTaxesTable'),
 })
+
+addMiddleware(store, mstLog())
 
 export const StoreContext = createContext(store)
 StoreContext.displayName = 'Store Context'

@@ -7,6 +7,7 @@ export default {
 		extends: ['plugin:react/recommended', 'plugin:unicorn/recommended', ],
 	parser: '@typescript-eslint/parser',
 	parserOptions: {
+		
 		ecmaFeatures: {
 			jsx: true,
 		},

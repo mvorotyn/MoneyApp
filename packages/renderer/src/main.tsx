@@ -3,7 +3,7 @@ import { render } from 'react-dom'
 import App from './App'
 import './samples/electron-store'
 import './styles/index.css'
-import { StoreProvider } from './stores/stores'
+import { StoreProvider } from './stores/mobxStore'
 
 render(
 	<StrictMode>

@@ -17,7 +17,8 @@
 		"node": "^12.20.0 || ^14.13.1 || >=16.0.0"
 	},
 	"dependencies": {
-		"electron-store": "^8.0.1"
+		"electron-store": "^8.0.1",
+		"mst-log": "^2.0.0"
 	},
 	"devDependencies": {
 		"@types/react": "^17.0.39",
