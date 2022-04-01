@@ -38,17 +38,19 @@ export async function apiUserRegister(user: {
 		})
 }
 
+export interface TableData {
+	title: string
+	tableData?: {
+		key: string
+		name: string
+		count: number
+		description: string
+		date: string
+	}
+}
+
 export function apiSyncTableData(
-	data: {
-		title: string
-		tableData?: {
-			key: string
-			name: string
-			count: number
-			description: string
-			date: string
-		}
-	},
+	data: TableData,
 	apiAccessToken: string
 ) {
 	return fetch('http://localhost:3008/table-data', {

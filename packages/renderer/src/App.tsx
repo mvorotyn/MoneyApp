@@ -13,7 +13,7 @@ import AppLoginModal from './components/AppLoginModal'
 import {
 	_NotCustomized,
 } from 'mobx-state-tree'
-import { apiSyncTableData } from './API/syncApi'
+import { apiSyncTableData, TableData } from './API/syncApi'
 
 const { Title } = Typography
 const { Header, Content, Footer } = Layout
@@ -60,15 +60,14 @@ function AppHeader() {
 		}
 		const dataArr = [
 			{ title: 'FoodTable', tableData: store.dataForFoodTable.toJSON() },
-			{ title: 'TransportTable', tableData: store.dataForTransportTable.toJSON() },
-			{ title: 'HealthTable', tableData: store.dataForHealthTable.toJSON() },
+			{ title: 'TransportTable', tableData: store.dataForTransportTable.toJSON()},
+			{ title: 'HealthTable', tableData: store.dataForHealthTable.toJSON()  },
 			{ title: 'HouseTable', tableData: store.dataForHouseTable.toJSON() },
 			{ title: 'TaxesTable', tableData: store.dataForTaxesTable.toJSON() },
 		]
 
 		for (let i = 0; i < dataArr.length; i++) {
-			
-			let response = await apiSyncTableData(dataArr[i], store.ApiAccessToken)
+			let response = await apiSyncTableData({title: dataArr[i].title, tableData: dataArr[i].tableData}, store.ApiAccessToken)
 			console.log('response ', i, response)
 			if (response.statusCode === 429) {
 				trotError = true
